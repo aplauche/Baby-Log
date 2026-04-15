@@ -8,15 +8,15 @@ export const entries = sqliteTable("entries", {
   entryDate: text("entry_date").notNull(),
   entryTime: text("entry_time").notNull(),
 
-  // Food type: "breast", "bottle", or null (no feeding logged)
+  // Food type: "breast", "bottle", "both", or null (no feeding logged)
   foodType: text("food_type"),
 
   // Bottle fields
   bottleAmountMl: real("bottle_amount_ml"),
 
-  // Breast fields
-  breastSide: text("breast_side"), // "left", "right", "both"
-  breastDurationMin: integer("breast_duration_min"),
+  // Breast fields — per side, null means that side was not used
+  breastLeftDurationMin: integer("breast_left_duration_min"),
+  breastRightDurationMin: integer("breast_right_duration_min"),
 
   // Diaper
   pee: integer("pee", { mode: "boolean" }).notNull().default(false),

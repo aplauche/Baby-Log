@@ -28,15 +28,21 @@ for (let day = DAYS - 1; day >= 0; day--) {
 
   feedingHours.forEach((hour, i) => {
     const minute = Math.floor(Math.random() * 20);
-    const isBottle = i % 3 === 0; // mix of breast and bottle
+    const isBottle = i % 3 === 0;
+    // Alternate: left only, right only, or both
+    const sidePattern = i % 3;
 
     rows.push({
       entryDate: date,
       entryTime: timeStr(hour, minute),
       foodType: isBottle ? "bottle" : "breast",
       bottleAmountMl: isBottle ? 90 + Math.round(Math.random() * 60) : null,
-      breastSide: !isBottle ? (["left", "right", "both"] as const)[i % 3] : null,
-      breastDurationMin: !isBottle ? 10 + Math.round(Math.random() * 10) : null,
+      breastLeftDurationMin: !isBottle && sidePattern !== 2
+        ? 8 + Math.round(Math.random() * 8)
+        : null,
+      breastRightDurationMin: !isBottle && sidePattern !== 1
+        ? 8 + Math.round(Math.random() * 8)
+        : null,
       pee: Math.random() > 0.2,
       poop: Math.random() > 0.65,
       comments: null,

@@ -28,9 +28,10 @@ function EntryRow({ entry }: { entry: Entry }) {
     chips.push(`🍼 Bottle${entry.bottleAmountMl ? ` · ${entry.bottleAmountMl}ml` : ""}`);
   }
   if (entry.foodType === "breast" || entry.foodType === "both") {
-    const side = entry.breastSide ? ` · ${entry.breastSide}` : "";
-    const dur = entry.breastDurationMin ? ` · ${entry.breastDurationMin}min` : "";
-    chips.push(`🤱 Breast${side}${dur}`);
+    const parts: string[] = [];
+    if (entry.breastLeftDurationMin) parts.push(`L ${entry.breastLeftDurationMin}min`);
+    if (entry.breastRightDurationMin) parts.push(`R ${entry.breastRightDurationMin}min`);
+    chips.push(`🤱 Breast${parts.length ? ` · ${parts.join(", ")}` : ""}`);
   }
   if (entry.pee) chips.push("💧 Pee");
   if (entry.poop) chips.push("💩 Poop");
@@ -67,8 +68,10 @@ export default function LogPage() {
   const [entryTime, setEntryTime] = useState(now.toTimeString().slice(0, 5));
   // Feeding — two independent toggles
   const [showBreast, setShowBreast] = useState(false);
-  const [breastSide, setBreastSide] = useState("");
-  const [breastDurationMin, setBreastDurationMin] = useState("");
+  const [breastLeft, setBreastLeft] = useState(false);
+  const [breastLeftDuration, setBreastLeftDuration] = useState("");
+  const [breastRight, setBreastRight] = useState(false);
+  const [breastRightDuration, setBreastRightDuration] = useState("");
   const [showBottle, setShowBottle] = useState(false);
   const [bottleAmountMl, setBottleAmountMl] = useState("");
   // Diaper + notes
@@ -102,8 +105,10 @@ export default function LogPage() {
 
   const resetForm = () => {
     setShowBreast(false);
-    setBreastSide("");
-    setBreastDurationMin("");
+    setBreastLeft(false);
+    setBreastLeftDuration("");
+    setBreastRight(false);
+    setBreastRightDuration("");
     setShowBottle(false);
     setBottleAmountMl("");
     setPee(false);
@@ -131,8 +136,8 @@ export default function LogPage() {
           entryTime,
           foodType,
           bottleAmountMl: showBottle ? Number(bottleAmountMl) || null : null,
-          breastSide: showBreast ? breastSide || null : null,
-          breastDurationMin: showBreast ? Number(breastDurationMin) || null : null,
+          breastLeftDurationMin: showBreast && breastLeft ? Number(breastLeftDuration) || null : null,
+          breastRightDurationMin: showBreast && breastRight ? Number(breastRightDuration) || null : null,
           pee,
           poop,
           comments: comments || null,
@@ -207,19 +212,26 @@ export default function LogPage() {
                 <span className={`transition-transform duration-200 text-base-content/40 ${showBreast ? "rotate-180" : ""}`}>▾</span>
               </button>
               {showBreast && (
-                <div className="px-5 pb-4 grid grid-cols-2 gap-4 border-t border-base-200 pt-3">
-                  <div className="form-control">
-                    <label className="label py-1"><span className="label-text">Side</span></label>
-                    <select className="select select-bordered w-full" value={breastSide} onChange={(e) => setBreastSide(e.target.value)}>
-                      <option value="">Select...</option>
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
-                      <option value="both">Both</option>
-                    </select>
+                <div className="px-5 pb-4 border-t border-base-200 pt-3 space-y-3">
+                  {/* Left */}
+                  <div>
+                    <label className="label cursor-pointer justify-start gap-3 py-1">
+                      <input type="checkbox" className="checkbox checkbox-primary checkbox-sm" checked={breastLeft} onChange={(e) => setBreastLeft(e.target.checked)} />
+                      <span className="label-text font-semibold">Left</span>
+                    </label>
+                    {breastLeft && (
+                      <input type="number" className="input input-bordered w-full mt-1" placeholder="Duration (min)" min="0" value={breastLeftDuration} onChange={(e) => setBreastLeftDuration(e.target.value)} />
+                    )}
                   </div>
-                  <div className="form-control">
-                    <label className="label py-1"><span className="label-text">Duration (min)</span></label>
-                    <input type="number" className="input input-bordered w-full" placeholder="e.g. 15" min="0" value={breastDurationMin} onChange={(e) => setBreastDurationMin(e.target.value)} />
+                  {/* Right */}
+                  <div>
+                    <label className="label cursor-pointer justify-start gap-3 py-1">
+                      <input type="checkbox" className="checkbox checkbox-primary checkbox-sm" checked={breastRight} onChange={(e) => setBreastRight(e.target.checked)} />
+                      <span className="label-text font-semibold">Right</span>
+                    </label>
+                    {breastRight && (
+                      <input type="number" className="input input-bordered w-full mt-1" placeholder="Duration (min)" min="0" value={breastRightDuration} onChange={(e) => setBreastRightDuration(e.target.value)} />
+                    )}
                   </div>
                 </div>
               )}

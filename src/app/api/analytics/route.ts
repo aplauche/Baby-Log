@@ -50,7 +50,10 @@ export async function GET(request: NextRequest) {
 
   const avgBreastMin =
     breastFeedings.length > 0
-      ? breastFeedings.reduce((sum, r) => sum + (r.breastDurationMin || 0), 0) / breastFeedings.length
+      ? breastFeedings.reduce(
+          (sum, r) => sum + (r.breastLeftDurationMin || 0) + (r.breastRightDurationMin || 0),
+          0
+        ) / breastFeedings.length
       : 0;
 
   const totalPee = rows.filter((r) => r.pee).length;
