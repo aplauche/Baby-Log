@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
@@ -11,6 +11,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -25,10 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="pastel">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-base-100`}
-      >
+    <html lang="en" data-theme="babylog" className={`${nunito.variable} ${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased min-h-screen bg-base-100">
         <Navbar />
         <main>{children}</main>
       </body>

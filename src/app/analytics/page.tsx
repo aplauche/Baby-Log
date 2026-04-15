@@ -39,6 +39,7 @@ interface DailyData {
 
 interface AnalyticsData {
   days: number;
+  interval: "hour" | "6hour" | "day";
   totalFeedings: number;
   feedingsPerDay: number;
   avgBottleMl: number;
@@ -51,6 +52,8 @@ interface AnalyticsData {
   breastCount: number;
   daily: DailyData[];
 }
+
+const fmt = (n: number) => parseFloat(n.toFixed(1));
 
 const PERIODS = [
   { label: "24 Hours", days: 1 },
@@ -85,6 +88,23 @@ export default function AnalyticsPage() {
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
+  const formatHour = (dateHour: string) => {
+    const h = parseInt(dateHour.split("T")[1], 10);
+    if (h === 0) return "12am";
+    if (h < 12) return `${h}am`;
+    if (h === 12) return "12pm";
+    return `${h - 12}pm`;
+  };
+
+  const formatSixHour = (dateHour: string) => {
+    const [datePart, hourPart] = dateHour.split("T");
+    const d = new Date(datePart + "T00:00:00");
+    const day = d.toLocaleDateString("en-US", { weekday: "short" });
+    const h = parseInt(hourPart, 10);
+    const label = h === 0 ? "12am" : h < 12 ? `${h}am` : h === 12 ? "12pm" : `${h - 12}pm`;
+    return `${day} ${label}`;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -103,7 +123,11 @@ export default function AnalyticsPage() {
     );
   }
 
-  const labels = data.daily.map((d) => formatDate(d.date));
+  const labels = data.daily.map((d) =>
+    data.interval === "hour" ? formatHour(d.date)
+    : data.interval === "6hour" ? formatSixHour(d.date)
+    : formatDate(d.date)
+  );
 
   const feedingChartData = {
     labels,
@@ -172,14 +196,19 @@ export default function AnalyticsPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Analytics</h1>
+      <h1
+        className="text-3xl font-extrabold mb-6 text-base-content"
+        style={{ fontFamily: "var(--font-nunito), sans-serif" }}
+      >
+        Analytics
+      </h1>
 
       {/* Period Tabs */}
-      <div className="tabs tabs-boxed mb-8 inline-flex">
+      <div className="tabs tabs-boxed mb-8 inline-flex bg-base-200 border border-base-300">
         {PERIODS.map((p) => (
           <button
             key={p.days}
-            className={`tab ${activeDays === p.days ? "tab-active" : ""}`}
+            className={`tab font-semibold transition-colors ${activeDays === p.days ? "tab-active" : "hover:text-primary"}`}
             onClick={() => setActiveDays(p.days)}
           >
             {p.label}
@@ -189,27 +218,27 @@ export default function AnalyticsPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="stat bg-base-200 rounded-box shadow-sm">
-          <div className="stat-title">Feedings / Day</div>
-          <div className="stat-value text-primary">{data.feedingsPerDay}</div>
-          <div className="stat-desc">{data.totalFeedings} total</div>
+        <div className="stat bg-base-100 rounded-box shadow-sm border border-base-300">
+          <div className="stat-title text-base-content/50 text-xs font-semibold uppercase tracking-wide">Feedings / Day</div>
+          <div className="stat-value text-primary" style={{ fontFamily: "var(--font-nunito), sans-serif" }}>{fmt(data.feedingsPerDay)}</div>
+          <div className="stat-desc text-base-content/50">{data.totalFeedings} total</div>
         </div>
-        <div className="stat bg-base-200 rounded-box shadow-sm">
-          <div className="stat-title">Avg Bottle</div>
-          <div className="stat-value text-info">{data.avgBottleMl} ml</div>
-          <div className="stat-desc">{data.bottleCount} feedings</div>
+        <div className="stat bg-base-100 rounded-box shadow-sm border border-base-300">
+          <div className="stat-title text-base-content/50 text-xs font-semibold uppercase tracking-wide">Avg Bottle</div>
+          <div className="stat-value text-info" style={{ fontFamily: "var(--font-nunito), sans-serif" }}>{fmt(data.avgBottleMl)} ml</div>
+          <div className="stat-desc text-base-content/50">{data.bottleCount} feedings</div>
         </div>
-        <div className="stat bg-base-200 rounded-box shadow-sm">
-          <div className="stat-title">Avg Breast</div>
-          <div className="stat-value text-secondary">{data.avgBreastMin} min</div>
-          <div className="stat-desc">{data.breastCount} feedings</div>
+        <div className="stat bg-base-100 rounded-box shadow-sm border border-base-300">
+          <div className="stat-title text-base-content/50 text-xs font-semibold uppercase tracking-wide">Avg Breast</div>
+          <div className="stat-value text-secondary" style={{ fontFamily: "var(--font-nunito), sans-serif" }}>{fmt(data.avgBreastMin)} min</div>
+          <div className="stat-desc text-base-content/50">{data.breastCount} feedings</div>
         </div>
-        <div className="stat bg-base-200 rounded-box shadow-sm">
-          <div className="stat-title">Diapers / Day</div>
-          <div className="stat-value text-accent">
-            {data.peePerDay + data.poopPerDay}
+        <div className="stat bg-base-100 rounded-box shadow-sm border border-base-300">
+          <div className="stat-title text-base-content/50 text-xs font-semibold uppercase tracking-wide">Diapers / Day</div>
+          <div className="stat-value text-accent" style={{ fontFamily: "var(--font-nunito), sans-serif" }}>
+            {fmt(data.peePerDay + data.poopPerDay)}
           </div>
-          <div className="stat-desc">
+          <div className="stat-desc text-base-content/50">
             💧 {data.peePerDay} &middot; 💩 {data.poopPerDay}
           </div>
         </div>
@@ -217,27 +246,42 @@ export default function AnalyticsPage() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card bg-base-200 shadow-sm">
+        <div className="card bg-base-100 shadow-sm border border-base-300">
           <div className="card-body">
-            <h2 className="card-title text-base">Feedings by Type</h2>
+            <h2
+              className="card-title text-base text-base-content"
+              style={{ fontFamily: "var(--font-nunito), sans-serif" }}
+            >
+              Feedings by Type
+            </h2>
             <div className="h-64">
               <Bar data={feedingChartData} options={chartOptions} />
             </div>
           </div>
         </div>
 
-        <div className="card bg-base-200 shadow-sm">
+        <div className="card bg-base-100 shadow-sm border border-base-300">
           <div className="card-body">
-            <h2 className="card-title text-base">Diaper Changes</h2>
+            <h2
+              className="card-title text-base text-base-content"
+              style={{ fontFamily: "var(--font-nunito), sans-serif" }}
+            >
+              Diaper Changes
+            </h2>
             <div className="h-64">
               <Line data={diaperChartData} options={chartOptions} />
             </div>
           </div>
         </div>
 
-        <div className="card bg-base-200 shadow-sm lg:col-span-2">
+        <div className="card bg-base-100 shadow-sm border border-base-300 lg:col-span-2">
           <div className="card-body">
-            <h2 className="card-title text-base">Bottle Volume (ml)</h2>
+            <h2
+              className="card-title text-base text-base-content"
+              style={{ fontFamily: "var(--font-nunito), sans-serif" }}
+            >
+              Bottle Volume (ml)
+            </h2>
             <div className="h-64">
               <Line data={volumeChartData} options={chartOptions} />
             </div>

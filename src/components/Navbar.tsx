@@ -10,9 +10,12 @@ export default function Navbar() {
     pathname === path ? "btn btn-primary btn-sm" : "btn btn-ghost btn-sm";
 
   return (
-    <div className="navbar bg-base-200 shadow-sm px-4">
+    <div className="navbar bg-gradient-to-r from-primary/30 via-base-200 to-secondary/20 shadow-sm px-4 border-b border-base-300">
       <div className="navbar-start">
-        <Link href="/" className="text-xl font-bold tracking-tight">
+        <Link
+          href="/"
+          className="text-xl font-bold tracking-tight text-base-content hover:text-primary transition-colors duration-200"
+        >
           🍼 BabyLog
         </Link>
       </div>
@@ -21,7 +24,7 @@ export default function Navbar() {
           Home
         </Link>
         <Link href="/log" className={linkClass("/log")}>
-          New Log
+          Log
         </Link>
         <Link href="/analytics" className={linkClass("/analytics")}>
           Analytics

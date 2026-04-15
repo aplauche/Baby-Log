@@ -1,33 +1,126 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect, useCallback } from "react";
+import type { Entry } from "@/db/schema";
 
-type FoodType = "breast" | "bottle" | "";
+function formatTime(time: string) {
+  const [h, m] = time.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
+function formatDate(date: string) {
+  const today = new Date().toISOString().split("T")[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  if (date === today) return "Today";
+  if (date === yesterday) return "Yesterday";
+  return new Date(date + "T00:00:00").toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function EntryRow({ entry }: { entry: Entry }) {
+  const chips: string[] = [];
+  if (entry.foodType === "bottle" || entry.foodType === "both") {
+    chips.push(`🍼 Bottle${entry.bottleAmountMl ? ` · ${entry.bottleAmountMl}ml` : ""}`);
+  }
+  if (entry.foodType === "breast" || entry.foodType === "both") {
+    const side = entry.breastSide ? ` · ${entry.breastSide}` : "";
+    const dur = entry.breastDurationMin ? ` · ${entry.breastDurationMin}min` : "";
+    chips.push(`🤱 Breast${side}${dur}`);
+  }
+  if (entry.pee) chips.push("💧 Pee");
+  if (entry.poop) chips.push("💩 Poop");
+
+  return (
+    <div className="flex gap-3 items-start py-3">
+      <span className="text-sm font-semibold text-base-content/40 w-16 shrink-0 pt-0.5">
+        {formatTime(entry.entryTime)}
+      </span>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap gap-1.5">
+          {chips.length > 0 ? (
+            chips.map((chip) => (
+              <span key={chip} className="badge badge-outline badge-md py-3 px-3">{chip}</span>
+            ))
+          ) : (
+            <span className="text-sm text-base-content/30 italic">No details</span>
+          )}
+        </div>
+        {entry.comments && (
+          <p className="text-sm text-base-content/50 mt-1">{entry.comments}</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function LogPage() {
   const now = new Date();
+
+  // Form state
+  const [formOpen, setFormOpen] = useState(false);
   const [entryDate, setEntryDate] = useState(now.toISOString().split("T")[0]);
-  const [entryTime, setEntryTime] = useState(
-    now.toTimeString().slice(0, 5)
-  );
-  const [foodType, setFoodType] = useState<FoodType>("");
-  const [bottleAmountMl, setBottleAmountMl] = useState("");
+  const [entryTime, setEntryTime] = useState(now.toTimeString().slice(0, 5));
+  // Feeding — two independent toggles
+  const [showBreast, setShowBreast] = useState(false);
   const [breastSide, setBreastSide] = useState("");
   const [breastDurationMin, setBreastDurationMin] = useState("");
+  const [showBottle, setShowBottle] = useState(false);
+  const [bottleAmountMl, setBottleAmountMl] = useState("");
+  // Diaper + notes
   const [pee, setPee] = useState(false);
   const [poop, setPoop] = useState(false);
   const [comments, setComments] = useState("");
-
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Entries list state
+  const [allEntries, setAllEntries] = useState<Entry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEntries = useCallback(async () => {
+    try {
+      const res = await fetch("/api/entries");
+      setAllEntries(await res.json());
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchEntries(); }, [fetchEntries]);
+
+  const openForm = () => {
+    const n = new Date();
+    setEntryDate(n.toISOString().split("T")[0]);
+    setEntryTime(n.toTimeString().slice(0, 5));
+    setFormOpen(true);
+  };
+
+  const resetForm = () => {
+    setShowBreast(false);
+    setBreastSide("");
+    setBreastDurationMin("");
+    setShowBottle(false);
+    setBottleAmountMl("");
+    setPee(false);
+    setPoop(false);
+    setComments("");
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
     setError("");
-    setSuccess(false);
+
+    const foodType =
+      showBreast && showBottle ? "both"
+      : showBreast ? "breast"
+      : showBottle ? "bottle"
+      : null;
 
     try {
       const res = await fetch("/api/entries", {
@@ -36,31 +129,19 @@ export default function LogPage() {
         body: JSON.stringify({
           entryDate,
           entryTime,
-          foodType: foodType || null,
-          bottleAmountMl: foodType === "bottle" ? Number(bottleAmountMl) || null : null,
-          breastSide: foodType === "breast" ? breastSide || null : null,
-          breastDurationMin:
-            foodType === "breast" ? Number(breastDurationMin) || null : null,
+          foodType,
+          bottleAmountMl: showBottle ? Number(bottleAmountMl) || null : null,
+          breastSide: showBreast ? breastSide || null : null,
+          breastDurationMin: showBreast ? Number(breastDurationMin) || null : null,
           pee,
           poop,
           comments: comments || null,
         }),
       });
-
       if (!res.ok) throw new Error("Failed to save entry");
-
-      setSuccess(true);
-      // Reset form
-      const newNow = new Date();
-      setEntryDate(newNow.toISOString().split("T")[0]);
-      setEntryTime(newNow.toTimeString().slice(0, 5));
-      setFoodType("");
-      setBottleAmountMl("");
-      setBreastSide("");
-      setBreastDurationMin("");
-      setPee(false);
-      setPoop(false);
-      setComments("");
+      resetForm();
+      setFormOpen(false);
+      await fetchEntries();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -68,196 +149,163 @@ export default function LogPage() {
     }
   };
 
+  // Group by date, already sorted desc from API
+  const byDate = allEntries.reduce<Record<string, Entry[]>>((acc, entry) => {
+    (acc[entry.entryDate] ??= []).push(entry);
+    return acc;
+  }, {});
+  const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
+
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">New Log Entry</h1>
-
-      {success && (
-        <div className="alert alert-success mb-6">
-          <span>Entry saved! </span>
-          <Link href="/analytics" className="link link-hover font-medium">
-            View Analytics →
-          </Link>
-        </div>
-      )}
-
-      {error && (
-        <div className="alert alert-error mb-6">
-          <span>{error}</span>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Date & Time */}
-        <div className="card bg-base-200 shadow-sm">
-          <div className="card-body">
-            <h2 className="card-title text-sm uppercase tracking-wide text-base-content/50">
-              When
-            </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Date</span>
-                </label>
-                <input
-                  type="date"
-                  className="input input-bordered w-full"
-                  value={entryDate}
-                  onChange={(e) => setEntryDate(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Time</span>
-                </label>
-                <input
-                  type="time"
-                  className="input input-bordered w-full"
-                  value={entryTime}
-                  onChange={(e) => setEntryTime(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Feeding */}
-        <div className="card bg-base-200 shadow-sm">
-          <div className="card-body">
-            <h2 className="card-title text-sm uppercase tracking-wide text-base-content/50">
-              Feeding (optional)
-            </h2>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className={`btn flex-1 ${foodType === "breast" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setFoodType(foodType === "breast" ? "" : "breast")}
-              >
-                🤱 Breast
-              </button>
-              <button
-                type="button"
-                className={`btn flex-1 ${foodType === "bottle" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setFoodType(foodType === "bottle" ? "" : "bottle")}
-              >
-                🍼 Bottle
-              </button>
-            </div>
-
-            {/* Bottle fields */}
-            {foodType === "bottle" && (
-              <div className="form-control mt-2">
-                <label className="label">
-                  <span className="label-text">Amount (ml)</span>
-                </label>
-                <input
-                  type="number"
-                  className="input input-bordered w-full"
-                  placeholder="e.g. 120"
-                  min="0"
-                  step="5"
-                  value={bottleAmountMl}
-                  onChange={(e) => setBottleAmountMl(e.target.value)}
-                />
-              </div>
-            )}
-
-            {/* Breast fields */}
-            {foodType === "breast" && (
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Side</span>
-                  </label>
-                  <select
-                    className="select select-bordered w-full"
-                    value={breastSide}
-                    onChange={(e) => setBreastSide(e.target.value)}
-                  >
-                    <option value="">Select...</option>
-                    <option value="left">Left</option>
-                    <option value="right">Right</option>
-                    <option value="both">Both</option>
-                  </select>
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Duration (min)</span>
-                  </label>
-                  <input
-                    type="number"
-                    className="input input-bordered w-full"
-                    placeholder="e.g. 15"
-                    min="0"
-                    value={breastDurationMin}
-                    onChange={(e) => setBreastDurationMin(e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Diaper */}
-        <div className="card bg-base-200 shadow-sm">
-          <div className="card-body">
-            <h2 className="card-title text-sm uppercase tracking-wide text-base-content/50">
-              Diaper (optional)
-            </h2>
-            <div className="flex gap-6">
-              <label className="label cursor-pointer gap-3">
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-primary"
-                  checked={pee}
-                  onChange={(e) => setPee(e.target.checked)}
-                />
-                <span className="label-text text-lg">💧 Pee</span>
-              </label>
-              <label className="label cursor-pointer gap-3">
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-primary"
-                  checked={poop}
-                  onChange={(e) => setPoop(e.target.checked)}
-                />
-                <span className="label-text text-lg">💩 Poop</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Comments */}
-        <div className="card bg-base-200 shadow-sm">
-          <div className="card-body">
-            <h2 className="card-title text-sm uppercase tracking-wide text-base-content/50">
-              Notes (optional)
-            </h2>
-            <textarea
-              className="textarea textarea-bordered w-full"
-              placeholder="Any additional notes..."
-              rows={3}
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Submit */}
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-extrabold text-base-content">Log</h1>
         <button
-          type="submit"
-          className="btn btn-primary btn-block btn-lg"
-          disabled={submitting}
+          className={`btn btn-sm shadow-sm gap-1 ${formOpen ? "btn-outline btn-primary" : "btn-primary"}`}
+          onClick={() => { if (formOpen) { setFormOpen(false); resetForm(); } else { openForm(); } }}
         >
-          {submitting ? (
-            <span className="loading loading-spinner loading-sm" />
-          ) : (
-            "Save Entry"
-          )}
+          {formOpen ? "✕ Cancel" : "+ New Entry"}
         </button>
-      </form>
+      </div>
+
+      {/* Collapsible form */}
+      {formOpen && (
+        <div className="mb-8">
+          {error && (
+            <div className="alert alert-error shadow-sm mb-4"><span>{error}</span></div>
+          )}
+          <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* When */}
+            <div className="card bg-base-100 shadow-sm border border-base-300">
+              <div className="card-body py-4">
+                <p className="text-xs uppercase tracking-widest text-primary/70 font-bold mb-2">When</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="form-control">
+                    <label className="label py-1"><span className="label-text">Date</span></label>
+                    <input type="date" className="input input-bordered w-full" value={entryDate} onChange={(e) => setEntryDate(e.target.value)} required />
+                  </div>
+                  <div className="form-control">
+                    <label className="label py-1"><span className="label-text">Time</span></label>
+                    <input type="time" className="input input-bordered w-full" value={entryTime} onChange={(e) => setEntryTime(e.target.value)} required />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Breast — independent collapsible */}
+            <div className="card bg-base-100 shadow-sm border border-base-300">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-5 py-4"
+                onClick={() => setShowBreast(!showBreast)}
+              >
+                <span className="flex items-center gap-2 font-semibold">
+                  🤱 <span>Breast feeding</span>
+                </span>
+                <span className={`transition-transform duration-200 text-base-content/40 ${showBreast ? "rotate-180" : ""}`}>▾</span>
+              </button>
+              {showBreast && (
+                <div className="px-5 pb-4 grid grid-cols-2 gap-4 border-t border-base-200 pt-3">
+                  <div className="form-control">
+                    <label className="label py-1"><span className="label-text">Side</span></label>
+                    <select className="select select-bordered w-full" value={breastSide} onChange={(e) => setBreastSide(e.target.value)}>
+                      <option value="">Select...</option>
+                      <option value="left">Left</option>
+                      <option value="right">Right</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </div>
+                  <div className="form-control">
+                    <label className="label py-1"><span className="label-text">Duration (min)</span></label>
+                    <input type="number" className="input input-bordered w-full" placeholder="e.g. 15" min="0" value={breastDurationMin} onChange={(e) => setBreastDurationMin(e.target.value)} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Bottle — independent collapsible */}
+            <div className="card bg-base-100 shadow-sm border border-base-300">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-5 py-4"
+                onClick={() => setShowBottle(!showBottle)}
+              >
+                <span className="flex items-center gap-2 font-semibold">
+                  🍼 <span>Bottle feeding</span>
+                </span>
+                <span className={`transition-transform duration-200 text-base-content/40 ${showBottle ? "rotate-180" : ""}`}>▾</span>
+              </button>
+              {showBottle && (
+                <div className="px-5 pb-4 border-t border-base-200 pt-3">
+                  <div className="form-control">
+                    <label className="label py-1"><span className="label-text">Amount (ml)</span></label>
+                    <input type="number" className="input input-bordered w-full" placeholder="e.g. 120" min="0" step="5" value={bottleAmountMl} onChange={(e) => setBottleAmountMl(e.target.value)} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Diaper */}
+            <div className="card bg-base-100 shadow-sm border border-base-300">
+              <div className="card-body py-4">
+                <p className="text-xs uppercase tracking-widest text-primary/70 font-bold mb-2">Diaper</p>
+                <div className="flex gap-6">
+                  <label className="label cursor-pointer gap-3">
+                    <input type="checkbox" className="checkbox checkbox-primary" checked={pee} onChange={(e) => setPee(e.target.checked)} />
+                    <span className="label-text text-lg">💧 Pee</span>
+                  </label>
+                  <label className="label cursor-pointer gap-3">
+                    <input type="checkbox" className="checkbox checkbox-primary" checked={poop} onChange={(e) => setPoop(e.target.checked)} />
+                    <span className="label-text text-lg">💩 Poop</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="card bg-base-100 shadow-sm border border-base-300">
+              <div className="card-body py-4">
+                <p className="text-xs uppercase tracking-widest text-primary/70 font-bold mb-2">Additional Notes</p>
+                <textarea className="textarea textarea-bordered w-full" placeholder="Any additional notes..." rows={2} value={comments} onChange={(e) => setComments(e.target.value)} />
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary btn-block shadow-md" disabled={submitting}>
+              {submitting ? <span className="loading loading-spinner loading-sm" /> : "Save Entry"}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Entries list */}
+      {loading ? (
+        <div className="flex justify-center py-16">
+          <span className="loading loading-spinner loading-lg text-primary" />
+        </div>
+      ) : allEntries.length === 0 ? (
+        <div className="text-center py-16 text-base-content/40">
+          <p className="text-4xl mb-3">📋</p>
+          <p className="font-semibold">No entries yet</p>
+          <p className="text-sm mt-1">Tap "+ New Entry" to get started</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {dates.map((date) => (
+            <div key={date}>
+              <p className="text-xs uppercase tracking-widest text-base-content/40 font-bold pb-1 border-b border-base-300 mb-1">
+                {formatDate(date)}
+              </p>
+              <div className="divide-y divide-base-200">
+                {byDate[date].map((entry) => (
+                  <EntryRow key={entry.id} entry={entry} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
