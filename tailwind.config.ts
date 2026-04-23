@@ -10,6 +10,23 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-nunito)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)"],
+        handwriting: ["var(--font-caveat)", "var(--font-nunito)", "cursive"],
+      },
+      colors: {
+        paper: "#F5F0E8",
+        "paper-dark": "#EDE7D9",
+        "paper-darker": "#E0D8C8",
+        "ink": "#3d2a2a",
+        "ink-faint": "#8a7070",
+        "dusty-rose": "#F2B8C6",
+        "sage": "#A8C5A0",
+        "warm-yellow": "#F5DFA0",
+        "lavender": "#C9BEF0",
+      },
+      boxShadow: {
+        "paper": "2px 3px 8px rgba(100, 70, 50, 0.12), 0 1px 2px rgba(100, 70, 50, 0.08)",
+        "paper-lg": "3px 5px 16px rgba(100, 70, 50, 0.15), 0 2px 4px rgba(100, 70, 50, 0.1)",
+        "stamp": "1px 1px 0 rgba(100, 70, 50, 0.2), inset 0 1px 0 rgba(255,255,255,0.4)",
       },
     },
   },
@@ -18,43 +35,44 @@ const config: Config = {
     themes: [
       {
         babylog: {
-          // Primary: soft rose-pink — warm, nurturing, the brand anchor
-          "primary": "#F9A8C9",
-          "primary-content": "#5c1f36",
+          // Primary: dusty rose — warm, nurturing, the brand anchor
+          "primary": "#E8A0B4",
+          "primary-content": "#4a1528",
 
-          // Secondary: warm lavender — dreamy and calm
-          "secondary": "#C4B5FD",
-          "secondary-content": "#2e1a5c",
+          // Secondary: soft lavender — dreamy and calm
+          "secondary": "#B8AEDD",
+          "secondary-content": "#251645",
 
-          // Accent: soft mint — fresh contrast for highlights
-          "accent": "#6EE7B7",
-          "accent-content": "#0d3d2a",
+          // Accent: sage green — natural, grounding
+          "accent": "#8BBF85",
+          "accent-content": "#0d2b09",
 
-          // Neutral: warm mid-gray (not cool/blue-gray)
-          "neutral": "#a89fa8",
-          "neutral-content": "#fdf6f0",
+          // Neutral: warm parchment-gray
+          "neutral": "#9e9080",
+          "neutral-content": "#f5f0e8",
 
-          // Base palette: warm creamy whites, not cold clinical whites
-          "base-100": "#fdf6f0",   // warm cream — main page background
-          "base-200": "#faeee6",   // slightly warmer — card / section backgrounds
-          "base-300": "#f0ddd1",   // warm light peach — borders, dividers
-          "base-content": "#3d2a2a", // warm near-black for text — easier on tired eyes
+          // Base palette: aged notebook paper tones
+          "base-100": "#F5F0E8",   // warm off-white paper — main page background
+          "base-200": "#EDE7D9",   // slightly deeper paper — sections, alternating rows
+          "base-300": "#D9D0C0",   // aged paper border — dividers, borders
+          "base-content": "#3d2a2a", // warm ink — easier on tired eyes
 
-          // Semantic colors
-          "info": "#93C5FD",
-          "info-content": "#1e3a5f",
-          "success": "#86EFAC",
-          "success-content": "#14532d",
-          "warning": "#FCD34D",
-          "warning-content": "#451a03",
-          "error": "#FCA5A5",
-          "error-content": "#450a0a",
+          // Semantic colors — muted, not neon
+          "info": "#8BB8D4",
+          "info-content": "#0e2b3d",
+          "success": "#7DC4A0",
+          "success-content": "#0d2e1c",
+          "warning": "#E8C97A",
+          "warning-content": "#3d2a00",
+          "error": "#E8A0A0",
+          "error-content": "#3d0a0a",
 
-          // Rounded corners — friendly, not sharp
-          "--rounded-box": "1rem",
-          "--rounded-btn": "0.75rem",
+          // Rounded corners — soft and friendly
+          "--rounded-box": "0.75rem",
+          "--rounded-btn": "0.5rem",
           "--rounded-badge": "1.9rem",
-          "--tab-radius": "0.6rem",
+          "--tab-radius": "0.5rem",
+          "--border-btn": "1.5px",
         },
       },
     ],

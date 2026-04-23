@@ -6,7 +6,77 @@
   html {
     font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   }
+
+  /* Headings use the Caveat handwriting font */
   h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-caveat), var(--font-nunito), cursive;
     font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  /* Warm paper page background */
+  body {
+    background-color: #F5F0E8;
+  }
+}
+
+@layer components {
+  /* ── Emoji sticker wrapper ────────────────────────────────────────────
+     Wrap any emoji in .sticker to get the rounded white circle effect,
+     like a sticker pressed onto paper. */
+  .sticker {
+    @apply bg-white rounded-full p-1 shadow-sm inline-flex items-center justify-center leading-none;
+  }
+
+  /* ── Scrapbook card ───────────────────────────────────────────────────
+     White/cream card that looks like a piece of paper pinned to a board.
+     Override DaisyUI .card background and shadow. */
+  .card-scrapbook {
+    @apply bg-white rounded-xl border border-paper-darker;
+    box-shadow: 2px 3px 8px rgba(100, 70, 50, 0.12), 0 1px 2px rgba(100, 70, 50, 0.08);
+  }
+
+  /* ── Hand-stamped button feel ─────────────────────────────────────────
+     DaisyUI btn + these classes → slightly textured look via border + shadow. */
+  .btn-stamp {
+    @apply border-2 border-current;
+    box-shadow: 2px 2px 0 rgba(100, 70, 50, 0.20);
+    transition: box-shadow 0.1s ease, transform 0.1s ease;
+  }
+  .btn-stamp:hover {
+    box-shadow: 3px 3px 0 rgba(100, 70, 50, 0.25);
+    transform: translateY(-1px);
+  }
+  .btn-stamp:active {
+    box-shadow: 1px 1px 0 rgba(100, 70, 50, 0.20);
+    transform: translateY(0);
+  }
+
+  /* ── Ruled journal table ──────────────────────────────────────────────
+     Wraps the entries list to give it a pencil-lined journal look. */
+  .journal-divider {
+    border-top: 1px solid #D9D0C0;
+  }
+  .journal-row {
+    @apply py-3;
+    border-bottom: 1px dashed #D9D0C0;
+  }
+  .journal-row:last-child {
+    border-bottom: none;
+  }
+  .journal-row:nth-child(even) {
+    background-color: rgba(237, 231, 217, 0.35);
+  }
+
+  /* ── Section label (uppercase pencil-style heading) ──────────────────*/
+  .section-label {
+    font-family: var(--font-caveat), cursive;
+    @apply text-sm tracking-widest font-semibold uppercase;
+    color: #9e9080;
+  }
+
+  /* ── Dashed divider ──────────────────────────────────────────────────*/
+  .dashed-divider {
+    border-top: 1.5px dashed #D9D0C0;
   }
 }

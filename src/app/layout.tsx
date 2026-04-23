@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Nunito } from "next/font/google";
+import { Geist, Geist_Mono, Nunito, Caveat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
@@ -19,6 +19,12 @@ const nunito = Nunito({
   weight: ["400", "600", "700", "800"],
 });
 
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "BabyLog - Track Your Baby's Feedings & Diapers",
   description:
@@ -31,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="babylog" className={`${nunito.variable} ${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" data-theme="babylog" className={`${nunito.variable} ${geistSans.variable} ${geistMono.variable} ${caveat.variable}`}>
       <body className="antialiased min-h-screen bg-base-100">
         <Navbar />
         <main>{children}</main>
