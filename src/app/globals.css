@@ -14,69 +14,70 @@
     letter-spacing: 0.01em;
   }
 
-  /* Warm paper page background */
   body {
-    background-color: #F5F0E8;
+    background-color: #F8F5FF;
   }
 }
 
 @layer components {
   /* ── Emoji sticker wrapper ────────────────────────────────────────────
-     Wrap any emoji in .sticker to get the rounded white circle effect,
-     like a sticker pressed onto paper. */
+     Wrap any emoji in .sticker for a rounded bordered sticker effect. */
   .sticker {
-    @apply bg-white rounded-full p-1 shadow-sm inline-flex items-center justify-center leading-none;
+    @apply bg-white rounded-full inline-flex items-center justify-center leading-none;
+    border: 2px solid #1a1a2e;
+    box-shadow: 2px 2px 0 #1a1a2e;
   }
 
-  /* ── Scrapbook card ───────────────────────────────────────────────────
-     White/cream card that looks like a piece of paper pinned to a board.
-     Override DaisyUI .card background and shadow. */
+  /* ── Retro sticker card ───────────────────────────────────────────────
+     White card with thick dark border and sharp geo drop shadow.
+     The signature element of the retro whimsical look. */
   .card-scrapbook {
-    @apply bg-white rounded-xl border border-paper-darker;
-    box-shadow: 2px 3px 8px rgba(100, 70, 50, 0.12), 0 1px 2px rgba(100, 70, 50, 0.08);
+    background: white;
+    border-radius: 14px;
+    border: 2.5px solid #1a1a2e;
+    box-shadow: 4px 4px 0 #1a1a2e;
   }
 
-  /* ── Hand-stamped button feel ─────────────────────────────────────────
-     DaisyUI btn + these classes → slightly textured look via border + shadow. */
+  /* ── Retro button feel ────────────────────────────────────────────────
+     Thick border + sharp offset shadow that presses on click. */
   .btn-stamp {
-    @apply border-2 border-current;
-    box-shadow: 2px 2px 0 rgba(100, 70, 50, 0.20);
-    transition: box-shadow 0.1s ease, transform 0.1s ease;
+    border: 2.5px solid #1a1a2e !important;
+    box-shadow: 3px 3px 0 #1a1a2e;
+    transition: box-shadow 0.08s ease, transform 0.08s ease;
   }
   .btn-stamp:hover {
-    box-shadow: 3px 3px 0 rgba(100, 70, 50, 0.25);
-    transform: translateY(-1px);
+    box-shadow: 5px 5px 0 #1a1a2e;
+    transform: translate(-2px, -2px);
   }
   .btn-stamp:active {
-    box-shadow: 1px 1px 0 rgba(100, 70, 50, 0.20);
-    transform: translateY(0);
+    box-shadow: 1px 1px 0 #1a1a2e;
+    transform: translate(2px, 2px);
   }
 
-  /* ── Ruled journal table ──────────────────────────────────────────────
-     Wraps the entries list to give it a pencil-lined journal look. */
+  /* ── Entry list rows ──────────────────────────────────────────────────*/
   .journal-divider {
-    border-top: 1px solid #D9D0C0;
+    border-top: 1px solid #C9B8FF;
   }
   .journal-row {
     @apply py-3;
-    border-bottom: 1px dashed #D9D0C0;
+    border-bottom: 1px dashed #C9B8FF;
   }
   .journal-row:last-child {
     border-bottom: none;
   }
   .journal-row:nth-child(even) {
-    background-color: rgba(237, 231, 217, 0.35);
+    background-color: rgba(237, 232, 255, 0.4);
   }
 
-  /* ── Section label (uppercase pencil-style heading) ──────────────────*/
+  /* ── Section label ────────────────────────────────────────────────────*/
   .section-label {
     font-family: var(--font-caveat), cursive;
     @apply text-sm tracking-widest font-semibold uppercase;
-    color: #9e9080;
+    color: #7c6bb0;
   }
 
   /* ── Dashed divider ──────────────────────────────────────────────────*/
   .dashed-divider {
-    border-top: 1.5px dashed #D9D0C0;
+    border-top: 1.5px dashed #C9B8FF;
   }
 }

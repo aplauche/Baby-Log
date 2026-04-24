@@ -23,12 +23,13 @@ function formatDate(date: string) {
 }
 
 function EntryRow({ entry, index }: { entry: Entry; index: number }) {
-  const chips: { label: string; emoji: string; bg: string }[] = [];
+  const chips: { label: string; emoji: string; bg: string; border: string }[] = [];
   if (entry.foodType === "bottle" || entry.foodType === "both") {
     chips.push({
       label: `Bottle${entry.bottleAmountMl ? ` · ${entry.bottleAmountMl}ml` : ""}`,
       emoji: "🍼",
-      bg: "#EFF6FF",
+      bg: "#E0F3FF",
+      border: "#5BC4FF",
     });
   }
   if (entry.foodType === "breast" || entry.foodType === "both") {
@@ -38,22 +39,23 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
     chips.push({
       label: `Breast${parts.length ? ` · ${parts.join(", ")}` : ""}`,
       emoji: "🤱",
-      bg: "#FFF0F5",
+      bg: "#FFE5F3",
+      border: "#FF6EB4",
     });
   }
-  if (entry.pee) chips.push({ label: "Pee", emoji: "💧", bg: "#EFF6FF" });
-  if (entry.poop) chips.push({ label: "Poop", emoji: "💩", bg: "#FFFBEB" });
+  if (entry.pee) chips.push({ label: "Pee", emoji: "💧", bg: "#E0F3FF", border: "#5BC4FF" });
+  if (entry.poop) chips.push({ label: "Poop", emoji: "💩", bg: "#FFFAE0", border: "#FFE566" });
 
   const isEven = index % 2 === 0;
 
   return (
     <div
       className="journal-row flex gap-3 items-start px-2"
-      style={isEven ? { backgroundColor: "rgba(237, 231, 217, 0.35)" } : {}}
+      style={isEven ? { backgroundColor: "rgba(237, 232, 255, 0.4)" } : {}}
     >
       <span
         className="text-sm font-semibold w-16 shrink-0 pt-0.5"
-        style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1rem", color: "#9e9080" }}
+        style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1rem", color: "#7c6bb0" }}
       >
         {formatTime(entry.entryTime)}
       </span>
@@ -63,11 +65,11 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
             chips.map((chip) => (
               <span
                 key={chip.label}
-                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium border"
+                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium"
                 style={{
                   backgroundColor: chip.bg,
-                  borderColor: "#D9D0C0",
-                  color: "#3d2a2a",
+                  border: `2px solid ${chip.border}`,
+                  color: "#1a1a2e",
                   fontFamily: "var(--font-nunito), sans-serif",
                 }}
               >
@@ -78,11 +80,11 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
               </span>
             ))
           ) : (
-            <span className="text-sm italic" style={{ color: "#9e9080", fontFamily: "var(--font-nunito), sans-serif" }}>No details</span>
+            <span className="text-sm italic" style={{ color: "#7c6bb0", fontFamily: "var(--font-nunito), sans-serif" }}>No details</span>
           )}
         </div>
         {entry.comments && (
-          <p className="text-sm mt-1" style={{ color: "#9e9080", fontFamily: "var(--font-nunito), sans-serif" }}>
+          <p className="text-sm mt-1" style={{ color: "#7c6bb0", fontFamily: "var(--font-nunito), sans-serif" }}>
             {entry.comments}
           </p>
         )}
@@ -197,8 +199,8 @@ export default function LogPage() {
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
         <h1
-          className="text-5xl font-bold text-ink"
-          style={{ fontFamily: "var(--font-caveat), cursive" }}
+          className="text-5xl font-bold"
+          style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
         >
           <span className="sticker mr-2" style={{ width: "2rem", height: "2rem", fontSize: "1.1rem" }}>📋</span>
           Log
@@ -216,14 +218,14 @@ export default function LogPage() {
       {formOpen && (
         <div className="mb-8">
           {error && (
-            <div className="alert alert-error shadow-sm mb-4 rounded-xl border border-error/40">
+            <div className="alert alert-error shadow-sm mb-4 rounded-xl" style={{ border: "2px solid #1a1a2e" }}>
               <span style={{ fontFamily: "var(--font-nunito), sans-serif" }}>{error}</span>
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-3">
 
             {/* When */}
-            <div className="card-scrapbook p-4">
+            <div className="card-scrapbook p-4" style={{ borderColor: "#5BC4FF", boxShadow: "3px 3px 0 #5BC4FF" }}>
               <p className="section-label mb-3">When</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
@@ -233,7 +235,7 @@ export default function LogPage() {
                   <input
                     type="date"
                     className="input input-bordered w-full bg-white"
-                    style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#D9D0C0" }}
+                    style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#C9B8FF" }}
                     value={entryDate}
                     onChange={(e) => setEntryDate(e.target.value)}
                     required
@@ -246,7 +248,7 @@ export default function LogPage() {
                   <input
                     type="time"
                     className="input input-bordered w-full bg-white"
-                    style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#D9D0C0" }}
+                    style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#C9B8FF" }}
                     value={entryTime}
                     onChange={(e) => setEntryTime(e.target.value)}
                     required
@@ -256,18 +258,18 @@ export default function LogPage() {
             </div>
 
             {/* Breast feeding — collapsible */}
-            <div className="card-scrapbook overflow-hidden">
+            <div className="card-scrapbook overflow-hidden" style={{ borderColor: "#FF6EB4", boxShadow: "3px 3px 0 #FF6EB4" }}>
               <button
                 type="button"
                 className="w-full flex items-center justify-between px-5 py-4"
                 onClick={() => setShowBreast(!showBreast)}
               >
-                <span className="flex items-center gap-2 font-semibold text-ink"
-                      style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1.15rem" }}>
-                  <span className="sticker" style={{ width: "1.6rem", height: "1.6rem", fontSize: "0.9rem", backgroundColor: "#FFF0F5" }}>🤱</span>
+                <span className="flex items-center gap-2 font-semibold"
+                      style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1.15rem", color: "#1a1a2e" }}>
+                  <span className="sticker" style={{ width: "1.6rem", height: "1.6rem", fontSize: "0.9rem", backgroundColor: "#FFE5F3" }}>🤱</span>
                   Breast feeding
                 </span>
-                <span className={`transition-transform duration-200 text-ink-faint ${showBreast ? "rotate-180" : ""}`}>▾</span>
+                <span className={`transition-transform duration-200 text-purple-muted ${showBreast ? "rotate-180" : ""}`} style={{ color: "#7c6bb0" }}>▾</span>
               </button>
               {showBreast && (
                 <div className="px-5 pb-4 dashed-divider pt-3 space-y-3">
@@ -280,7 +282,7 @@ export default function LogPage() {
                       <input
                         type="number"
                         className="input input-bordered w-full mt-1 bg-white"
-                        style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#D9D0C0" }}
+                        style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#C9B8FF" }}
                         placeholder="Duration (min)"
                         min="0"
                         value={breastLeftDuration}
@@ -297,7 +299,7 @@ export default function LogPage() {
                       <input
                         type="number"
                         className="input input-bordered w-full mt-1 bg-white"
-                        style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#D9D0C0" }}
+                        style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#C9B8FF" }}
                         placeholder="Duration (min)"
                         min="0"
                         value={breastRightDuration}
@@ -310,18 +312,18 @@ export default function LogPage() {
             </div>
 
             {/* Bottle feeding — collapsible */}
-            <div className="card-scrapbook overflow-hidden">
+            <div className="card-scrapbook overflow-hidden" style={{ borderColor: "#5BC4FF", boxShadow: "3px 3px 0 #5BC4FF" }}>
               <button
                 type="button"
                 className="w-full flex items-center justify-between px-5 py-4"
                 onClick={() => setShowBottle(!showBottle)}
               >
-                <span className="flex items-center gap-2 font-semibold text-ink"
-                      style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1.15rem" }}>
-                  <span className="sticker" style={{ width: "1.6rem", height: "1.6rem", fontSize: "0.9rem", backgroundColor: "#EFF6FF" }}>🍼</span>
+                <span className="flex items-center gap-2 font-semibold"
+                      style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1.15rem", color: "#1a1a2e" }}>
+                  <span className="sticker" style={{ width: "1.6rem", height: "1.6rem", fontSize: "0.9rem", backgroundColor: "#E0F3FF" }}>🍼</span>
                   Bottle feeding
                 </span>
-                <span className={`transition-transform duration-200 text-ink-faint ${showBottle ? "rotate-180" : ""}`}>▾</span>
+                <span className={`transition-transform duration-200 ${showBottle ? "rotate-180" : ""}`} style={{ color: "#7c6bb0" }}>▾</span>
               </button>
               {showBottle && (
                 <div className="px-5 pb-4 dashed-divider pt-3">
@@ -332,7 +334,7 @@ export default function LogPage() {
                     <input
                       type="number"
                       className="input input-bordered w-full bg-white"
-                      style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#D9D0C0" }}
+                      style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#C9B8FF" }}
                       placeholder="e.g. 120"
                       min="0"
                       step="5"
@@ -345,7 +347,7 @@ export default function LogPage() {
             </div>
 
             {/* Diaper */}
-            <div className="card-scrapbook p-4">
+            <div className="card-scrapbook p-4" style={{ borderColor: "#C9B8FF", boxShadow: "3px 3px 0 #C9B8FF" }}>
               <p className="section-label mb-3">Diaper</p>
               <div className="flex gap-6">
                 <label className="label cursor-pointer gap-3">
@@ -366,11 +368,11 @@ export default function LogPage() {
             </div>
 
             {/* Notes */}
-            <div className="card-scrapbook p-4">
+            <div className="card-scrapbook p-4" style={{ borderColor: "#C9B8FF", boxShadow: "3px 3px 0 #C9B8FF" }}>
               <p className="section-label mb-3">Additional Notes</p>
               <textarea
                 className="textarea textarea-bordered w-full bg-white"
-                style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#D9D0C0" }}
+                style={{ fontFamily: "var(--font-nunito), sans-serif", borderColor: "#C9B8FF" }}
                 placeholder="Any additional notes..."
                 rows={2}
                 value={comments}
@@ -398,14 +400,13 @@ export default function LogPage() {
       ) : allEntries.length === 0 ? (
         <div className="text-center py-16">
           <span className="sticker mx-auto mb-3" style={{ width: "4rem", height: "4rem", fontSize: "2rem" }}>📋</span>
-          <p className="font-bold text-ink mt-4" style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1.3rem" }}>No entries yet</p>
-          <p className="text-sm mt-1 text-ink-faint" style={{ fontFamily: "var(--font-nunito), sans-serif" }}>Tap &ldquo;+ New Entry&rdquo; to get started</p>
+          <p className="font-bold mt-4" style={{ fontFamily: "var(--font-caveat), cursive", fontSize: "1.3rem", color: "#1a1a2e" }}>No entries yet</p>
+          <p className="text-sm mt-1" style={{ fontFamily: "var(--font-nunito), sans-serif", color: "#7c6bb0" }}>Tap &ldquo;+ New Entry&rdquo; to get started</p>
         </div>
       ) : (
         <div className="space-y-6">
           {dates.map((date) => (
             <div key={date}>
-              {/* Date heading — like a tab divider in a planner */}
               <div className="flex items-center gap-3 mb-1">
                 <p
                   className="section-label"
@@ -415,7 +416,6 @@ export default function LogPage() {
                 </p>
                 <div className="flex-1 dashed-divider" />
               </div>
-              {/* Ruled rows */}
               <div className="card-scrapbook overflow-hidden">
                 {byDate[date].map((entry, i) => (
                   <EntryRow key={entry.id} entry={entry} index={i} />

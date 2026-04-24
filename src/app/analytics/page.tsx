@@ -61,12 +61,11 @@ const PERIODS = [
   { label: "7 Days", days: 7 },
 ];
 
-// Stat card metadata — each card gets a soft tinted background and a sticker emoji
 const STAT_META = [
-  { emoji: "🍽️", bg: "#FFF0F5", borderColor: "#F2B8C6", label: "Feedings / Day" },
-  { emoji: "🍼", bg: "#EFF6FF", borderColor: "#93C5FD", label: "Avg Bottle" },
-  { emoji: "🤱", bg: "#F5F0FF", borderColor: "#B8AEDD", label: "Avg Breast" },
-  { emoji: "👶", bg: "#F0FFF5", borderColor: "#A8C5A0", label: "Diapers / Day" },
+  { emoji: "🍽️", bg: "#FFE5F3", borderColor: "#FF6EB4", label: "Feedings / Day" },
+  { emoji: "🍼", bg: "#E0F3FF", borderColor: "#5BC4FF", label: "Avg Bottle" },
+  { emoji: "🤱", bg: "#F0ECFF", borderColor: "#9B87FF", label: "Avg Breast" },
+  { emoji: "👶", bg: "#FFFAE0", borderColor: "#FFE566", label: "Diapers / Day" },
 ];
 
 export default function AnalyticsPage() {
@@ -124,7 +123,7 @@ export default function AnalyticsPage() {
   if (!data) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="alert alert-warning rounded-xl border border-warning/40">
+        <div className="alert alert-warning rounded-xl" style={{ border: "2px solid #1a1a2e" }}>
           Could not load analytics data.
         </div>
       </div>
@@ -137,25 +136,24 @@ export default function AnalyticsPage() {
     : formatDate(d.date)
   );
 
-  // Chart colors pulled from the scrapbook palette
   const feedingChartData = {
     labels,
     datasets: [
       {
         label: "Bottle",
         data: data.daily.map((d) => d.bottle),
-        backgroundColor: "rgba(139, 184, 212, 0.65)",
-        borderColor: "rgba(139, 184, 212, 1)",
-        borderWidth: 1.5,
-        borderRadius: 5,
+        backgroundColor: "rgba(91, 196, 255, 0.6)",
+        borderColor: "#5BC4FF",
+        borderWidth: 2,
+        borderRadius: 6,
       },
       {
         label: "Breast",
         data: data.daily.map((d) => d.breast),
-        backgroundColor: "rgba(242, 184, 198, 0.65)",
-        borderColor: "rgba(242, 184, 198, 1)",
-        borderWidth: 1.5,
-        borderRadius: 5,
+        backgroundColor: "rgba(255, 110, 180, 0.6)",
+        borderColor: "#FF6EB4",
+        borderWidth: 2,
+        borderRadius: 6,
       },
     ],
   };
@@ -166,26 +164,28 @@ export default function AnalyticsPage() {
       {
         label: "Pee",
         data: data.daily.map((d) => d.pee),
-        borderColor: "rgb(139, 184, 212)",
-        backgroundColor: "rgba(139, 184, 212, 0.12)",
+        borderColor: "#5BC4FF",
+        backgroundColor: "rgba(91, 196, 255, 0.15)",
         fill: true,
         tension: 0.4,
-        borderWidth: 2,
+        borderWidth: 2.5,
         pointBackgroundColor: "white",
-        pointBorderColor: "rgb(139, 184, 212)",
-        pointBorderWidth: 2,
+        pointBorderColor: "#5BC4FF",
+        pointBorderWidth: 2.5,
+        pointRadius: 4,
       },
       {
         label: "Poop",
         data: data.daily.map((d) => d.poop),
-        borderColor: "rgb(200, 162, 100)",
-        backgroundColor: "rgba(200, 162, 100, 0.12)",
+        borderColor: "#d4a800",
+        backgroundColor: "rgba(255, 229, 102, 0.2)",
         fill: true,
         tension: 0.4,
-        borderWidth: 2,
+        borderWidth: 2.5,
         pointBackgroundColor: "white",
-        pointBorderColor: "rgb(200, 162, 100)",
-        pointBorderWidth: 2,
+        pointBorderColor: "#d4a800",
+        pointBorderWidth: 2.5,
+        pointRadius: 4,
       },
     ],
   };
@@ -196,14 +196,15 @@ export default function AnalyticsPage() {
       {
         label: "Bottle ml",
         data: data.daily.map((d) => d.bottleMl),
-        borderColor: "rgb(139, 184, 212)",
-        backgroundColor: "rgba(139, 184, 212, 0.15)",
+        borderColor: "#9B87FF",
+        backgroundColor: "rgba(155, 135, 255, 0.15)",
         fill: true,
         tension: 0.4,
-        borderWidth: 2,
+        borderWidth: 2.5,
         pointBackgroundColor: "white",
-        pointBorderColor: "rgb(139, 184, 212)",
-        pointBorderWidth: 2,
+        pointBorderColor: "#9B87FF",
+        pointBorderWidth: 2.5,
+        pointRadius: 4,
       },
     ],
   };
@@ -216,33 +217,33 @@ export default function AnalyticsPage() {
         position: "bottom" as const,
         labels: {
           font: { family: "'Nunito', sans-serif", size: 12 },
-          color: "#3d2a2a",
+          color: "#1a1a2e",
           padding: 16,
           usePointStyle: true,
           pointStyleWidth: 10,
         },
       },
       tooltip: {
-        backgroundColor: "rgba(255,255,255,0.95)",
-        borderColor: "#D9D0C0",
-        borderWidth: 1,
-        titleColor: "#3d2a2a",
-        bodyColor: "#6b5050",
+        backgroundColor: "rgba(255,255,255,0.97)",
+        borderColor: "#1a1a2e",
+        borderWidth: 2,
+        titleColor: "#1a1a2e",
+        bodyColor: "#4a3d6b",
         padding: 10,
         cornerRadius: 8,
       },
     },
     scales: {
       x: {
-        grid: { color: "rgba(217,208,192,0.5)", lineWidth: 1 },
-        ticks: { color: "#9e9080", font: { family: "'Nunito', sans-serif", size: 11 } },
-        border: { color: "#D9D0C0" },
+        grid: { color: "rgba(201, 184, 255, 0.4)", lineWidth: 1 },
+        ticks: { color: "#7c6bb0", font: { family: "'Nunito', sans-serif", size: 11 } },
+        border: { color: "#C9B8FF" },
       },
       y: {
         beginAtZero: true,
-        ticks: { stepSize: 1, color: "#9e9080", font: { family: "'Nunito', sans-serif", size: 11 } },
-        grid: { color: "rgba(217,208,192,0.5)", lineWidth: 1 },
-        border: { color: "#D9D0C0", dash: [4, 4] },
+        ticks: { stepSize: 1, color: "#7c6bb0", font: { family: "'Nunito', sans-serif", size: 11 } },
+        grid: { color: "rgba(201, 184, 255, 0.4)", lineWidth: 1 },
+        border: { color: "#C9B8FF", dash: [4, 4] },
       },
     },
   };
@@ -257,7 +258,7 @@ export default function AnalyticsPage() {
         <span className="flex items-center gap-1">
           <span className="sticker" style={{ width: "1rem", height: "1rem", fontSize: "0.6rem" }}>💧</span>
           {fmt(data.peePerDay)}
-          <span className="mx-0.5 text-paper-darker">&middot;</span>
+          <span className="mx-0.5" style={{ color: "#C9B8FF" }}>&middot;</span>
           <span className="sticker" style={{ width: "1rem", height: "1rem", fontSize: "0.6rem" }}>💩</span>
           {fmt(data.poopPerDay)}
         </span>
@@ -270,23 +271,24 @@ export default function AnalyticsPage() {
 
       {/* Page heading */}
       <h1
-        className="text-5xl font-bold mb-6 text-ink"
-        style={{ fontFamily: "var(--font-caveat), cursive" }}
+        className="text-5xl font-bold mb-6"
+        style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
       >
         <span className="sticker mr-2" style={{ width: "2rem", height: "2rem", fontSize: "1.1rem" }}>📊</span>
         Analytics
       </h1>
 
-      {/* Period selector — looks like tabbed notebook dividers */}
+      {/* Period selector */}
       <div className="flex gap-2 mb-8 flex-wrap">
         {PERIODS.map((p) => (
           <button
             key={p.days}
-            className={`btn btn-sm btn-stamp ${activeDays === p.days ? "btn-primary" : "btn-ghost border border-paper-darker"}`}
+            className={`btn btn-sm btn-stamp ${activeDays === p.days ? "btn-primary" : "btn-ghost"}`}
             style={{
               fontFamily: "var(--font-caveat), cursive",
               fontSize: "1rem",
               letterSpacing: "0.02em",
+              ...(activeDays !== p.days ? { background: "white", color: "#1a1a2e" } : {}),
             }}
             onClick={() => setActiveDays(p.days)}
           >
@@ -295,18 +297,18 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* Stat cards — scrapbook paper tiles */}
+      {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {statValues.map((stat, i) => {
           const meta = STAT_META[i];
           return (
             <div
               key={meta.label}
-              className="rounded-xl p-4 border"
+              className="rounded-xl p-4"
               style={{
                 backgroundColor: meta.bg,
-                borderColor: meta.borderColor,
-                boxShadow: "2px 3px 8px rgba(100, 70, 50, 0.10)",
+                border: `2.5px solid ${meta.borderColor}`,
+                boxShadow: `3px 3px 0 #1a1a2e`,
               }}
             >
               <div className="flex items-center gap-2 mb-2">
@@ -318,20 +320,20 @@ export default function AnalyticsPage() {
                 </span>
                 <span
                   className="text-xs font-semibold uppercase tracking-wide"
-                  style={{ color: "#9e9080", fontFamily: "var(--font-nunito), sans-serif" }}
+                  style={{ color: "#7c6bb0", fontFamily: "var(--font-nunito), sans-serif" }}
                 >
                   {meta.label}
                 </span>
               </div>
               <div
-                className="text-3xl font-bold text-ink leading-tight"
-                style={{ fontFamily: "var(--font-caveat), cursive" }}
+                className="text-3xl font-bold leading-tight"
+                style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
               >
                 {stat.value}
               </div>
               <div
                 className="text-xs mt-1"
-                style={{ color: "#9e9080", fontFamily: "var(--font-nunito), sans-serif" }}
+                style={{ color: "#7c6bb0", fontFamily: "var(--font-nunito), sans-serif" }}
               >
                 {stat.sub}
               </div>
@@ -340,13 +342,13 @@ export default function AnalyticsPage() {
         })}
       </div>
 
-      {/* Charts — white scrapbook cards */}
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <div className="card-scrapbook p-5">
           <h2
-            className="text-2xl font-bold text-ink mb-4"
-            style={{ fontFamily: "var(--font-caveat), cursive" }}
+            className="text-2xl font-bold mb-4"
+            style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
           >
             <span className="sticker mr-1.5" style={{ width: "1.5rem", height: "1.5rem", fontSize: "0.8rem" }}>🍽️</span>
             Feedings by Type
@@ -358,8 +360,8 @@ export default function AnalyticsPage() {
 
         <div className="card-scrapbook p-5">
           <h2
-            className="text-2xl font-bold text-ink mb-4"
-            style={{ fontFamily: "var(--font-caveat), cursive" }}
+            className="text-2xl font-bold mb-4"
+            style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
           >
             <span className="sticker mr-1.5" style={{ width: "1.5rem", height: "1.5rem", fontSize: "0.8rem" }}>👶</span>
             Diaper Changes
@@ -371,8 +373,8 @@ export default function AnalyticsPage() {
 
         <div className="card-scrapbook p-5 lg:col-span-2">
           <h2
-            className="text-2xl font-bold text-ink mb-4"
-            style={{ fontFamily: "var(--font-caveat), cursive" }}
+            className="text-2xl font-bold mb-4"
+            style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
           >
             <span className="sticker mr-1.5" style={{ width: "1.5rem", height: "1.5rem", fontSize: "0.8rem" }}>🍼</span>
             Bottle Volume (ml)

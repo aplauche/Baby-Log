@@ -13,20 +13,23 @@ const config: Config = {
         handwriting: ["var(--font-caveat)", "var(--font-nunito)", "cursive"],
       },
       colors: {
-        paper: "#F5F0E8",
-        "paper-dark": "#EDE7D9",
-        "paper-darker": "#E0D8C8",
-        "ink": "#3d2a2a",
-        "ink-faint": "#8a7070",
-        "dusty-rose": "#F2B8C6",
-        "sage": "#A8C5A0",
-        "warm-yellow": "#F5DFA0",
-        "lavender": "#C9BEF0",
+        "hot-pink": "#FF6EB4",
+        "sky-blue": "#5BC4FF",
+        "sunny": "#FFE566",
+        "navy": "#1a1a2e",
+        "lavender-light": "#F8F5FF",
+        "lavender-mid": "#EDE8FF",
+        "lavender-border": "#C9B8FF",
+        "purple-muted": "#7c6bb0",
       },
       boxShadow: {
-        "paper": "2px 3px 8px rgba(100, 70, 50, 0.12), 0 1px 2px rgba(100, 70, 50, 0.08)",
-        "paper-lg": "3px 5px 16px rgba(100, 70, 50, 0.15), 0 2px 4px rgba(100, 70, 50, 0.1)",
-        "stamp": "1px 1px 0 rgba(100, 70, 50, 0.2), inset 0 1px 0 rgba(255,255,255,0.4)",
+        "geo": "4px 4px 0 #1a1a2e",
+        "geo-sm": "2px 2px 0 #1a1a2e",
+        "geo-lg": "6px 6px 0 #1a1a2e",
+        "geo-pink": "4px 4px 0 #FF6EB4",
+        "geo-blue": "4px 4px 0 #5BC4FF",
+        "geo-yellow": "4px 4px 0 #FFE566",
+        "geo-purple": "4px 4px 0 #C9B8FF",
       },
     },
   },
@@ -35,44 +38,44 @@ const config: Config = {
     themes: [
       {
         babylog: {
-          // Primary: dusty rose — warm, nurturing, the brand anchor
-          "primary": "#E8A0B4",
-          "primary-content": "#4a1528",
+          // Primary: hot pink — bold, fun, retro
+          "primary": "#FF6EB4",
+          "primary-content": "#ffffff",
 
-          // Secondary: soft lavender — dreamy and calm
-          "secondary": "#B8AEDD",
-          "secondary-content": "#251645",
+          // Secondary: sky blue — bright and playful
+          "secondary": "#5BC4FF",
+          "secondary-content": "#0a2a3d",
 
-          // Accent: sage green — natural, grounding
-          "accent": "#8BBF85",
-          "accent-content": "#0d2b09",
+          // Accent: sunny yellow — cheerful pop
+          "accent": "#FFE566",
+          "accent-content": "#2a2000",
 
-          // Neutral: warm parchment-gray
-          "neutral": "#9e9080",
-          "neutral-content": "#f5f0e8",
+          // Neutral: dark navy — grounds the palette
+          "neutral": "#1a1a2e",
+          "neutral-content": "#f8f5ff",
 
-          // Base palette: aged notebook paper tones
-          "base-100": "#F5F0E8",   // warm off-white paper — main page background
-          "base-200": "#EDE7D9",   // slightly deeper paper — sections, alternating rows
-          "base-300": "#D9D0C0",   // aged paper border — dividers, borders
-          "base-content": "#3d2a2a", // warm ink — easier on tired eyes
+          // Base palette: light lavender tones
+          "base-100": "#F8F5FF",   // lavender-white — main page background
+          "base-200": "#EDE8FF",   // light lavender — sections
+          "base-300": "#C9B8FF",   // medium lavender — borders, dividers
+          "base-content": "#1a1a2e", // dark navy — text
 
-          // Semantic colors — muted, not neon
-          "info": "#8BB8D4",
-          "info-content": "#0e2b3d",
-          "success": "#7DC4A0",
-          "success-content": "#0d2e1c",
-          "warning": "#E8C97A",
-          "warning-content": "#3d2a00",
-          "error": "#E8A0A0",
-          "error-content": "#3d0a0a",
+          // Semantic colors — vivid
+          "info": "#5BC4FF",
+          "info-content": "#0a2a3d",
+          "success": "#5DDFB0",
+          "success-content": "#062a1c",
+          "warning": "#FFE566",
+          "warning-content": "#2a2000",
+          "error": "#FF6E6E",
+          "error-content": "#ffffff",
 
-          // Rounded corners — soft and friendly
-          "--rounded-box": "0.75rem",
-          "--rounded-btn": "0.5rem",
+          // Rounded corners — friendly
+          "--rounded-box": "1rem",
+          "--rounded-btn": "0.75rem",
           "--rounded-badge": "1.9rem",
           "--tab-radius": "0.5rem",
-          "--border-btn": "1.5px",
+          "--border-btn": "2.5px",
         },
       },
     ],
