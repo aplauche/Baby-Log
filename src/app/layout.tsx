@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Nunito, Caveat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import ChatWidget from "@/components/ChatWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen bg-base-100">
         <Navbar />
         <main>{children}</main>
+        <ChatWidget />
       </body>
     </html>
   );

@@ -80,4 +80,65 @@
   .dashed-divider {
     border-top: 1.5px dashed #C9B8FF;
   }
+
+  /* ── Chat widget ───────────────────────────────────────────────────── */
+  .chat-fab {
+    @apply fixed bottom-6 right-6 z-50;
+    @apply rounded-full w-14 h-14 flex items-center justify-center;
+    @apply text-2xl cursor-pointer select-none;
+    background: #FF6EB4;
+    border: 2.5px solid #1a1a2e;
+    box-shadow: 3px 3px 0 #1a1a2e;
+    transition: box-shadow 0.08s ease, transform 0.08s ease;
+  }
+  .chat-fab:hover {
+    box-shadow: 5px 5px 0 #1a1a2e;
+    transform: translate(-2px, -2px);
+  }
+  .chat-fab:active {
+    box-shadow: 1px 1px 0 #1a1a2e;
+    transform: translate(2px, 2px);
+  }
+
+  .chat-panel {
+    @apply fixed bottom-24 right-6 z-50;
+    @apply flex flex-col;
+    width: 22rem;
+    height: 28rem;
+    background: white;
+    border-radius: 14px;
+    border: 2.5px solid #1a1a2e;
+    box-shadow: 4px 4px 0 #1a1a2e;
+    animation: chat-slide-up 0.15s ease-out;
+  }
+
+  @keyframes chat-slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-bubble-user {
+    @apply rounded-2xl px-3 py-2 text-sm max-w-[85%] ml-auto;
+    background: #FF6EB4;
+    color: white;
+    border: 1.5px solid #1a1a2e;
+  }
+
+  .chat-bubble-assistant {
+    @apply rounded-2xl px-3 py-2 text-sm max-w-[85%];
+    background: #EDE8FF;
+    color: #1a1a2e;
+    border: 1.5px solid #C9B8FF;
+  }
+
+  .chat-suggestion {
+    @apply text-xs px-3 py-1.5 rounded-full cursor-pointer;
+    background: #F8F5FF;
+    border: 1.5px solid #C9B8FF;
+    color: #7c6bb0;
+    transition: background 0.1s ease;
+  }
+  .chat-suggestion:hover {
+    background: #EDE8FF;
+  }
 }
