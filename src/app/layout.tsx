@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="babylog" className={`${nunito.variable} ${geistSans.variable} ${geistMono.variable} ${caveat.variable}`}>
-      <body className="antialiased min-h-screen bg-base-100">
+      <body className="antialiased min-h-screen bg-base-100 paper-bg">
         <Navbar />
         <main>{children}</main>
       </body>

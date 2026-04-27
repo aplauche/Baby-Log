@@ -274,8 +274,7 @@ export default function AnalyticsPage() {
         className="text-5xl font-bold mb-6"
         style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
       >
-        <span className="sticker mr-2" style={{ width: "2rem", height: "2rem", fontSize: "1.1rem" }}>📊</span>
-        Analytics
+        My Analytics
       </h1>
 
       {/* Period selector */}

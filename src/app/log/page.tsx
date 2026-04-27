@@ -202,8 +202,8 @@ export default function LogPage() {
           className="text-5xl font-bold"
           style={{ fontFamily: "var(--font-caveat), cursive", color: "#1a1a2e" }}
         >
-          <span className="sticker mr-2" style={{ width: "2rem", height: "2rem", fontSize: "1.1rem" }}>📋</span>
-          Log
+          <span className=" mr-2" style={{ width: "5rem", height: "5rem", fontSize: "2.25rem" }}>📋</span>
+          My Log
         </h1>
         <button
           className={`btn btn-sm btn-stamp gap-1 ${formOpen ? "btn-outline" : "btn-primary"}`}
